@@ -11,6 +11,7 @@ namespace NNDL_HandwrittenNumberRecognition
     {
         public Network()
         {
+            NumSharp.NumPyRandom random = new NumSharp.NumPyRandom();
         }
     }
 }
