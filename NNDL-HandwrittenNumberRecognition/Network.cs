@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace NNDL_HandwrittenNumberRecognition
@@ -11,7 +12,6 @@ namespace NNDL_HandwrittenNumberRecognition
     {
         public Network()
         {
-            NumSharp.NumPyRandom random = new NumSharp.NumPyRandom();
         }
     }
 }

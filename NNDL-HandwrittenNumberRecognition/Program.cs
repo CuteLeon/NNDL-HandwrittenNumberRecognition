@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Accord.IO;
+using NumSharp;
 
 namespace NNDL_HandwrittenNumberRecognition
 {
@@ -26,6 +27,8 @@ namespace NNDL_HandwrittenNumberRecognition
                 Exit();
             }
 
+            var randn = new NumPyRandom().randn(Enumerable.Range(0, 10).ToArray());
+            _ = randn.strides;
             Exit();
         }
 

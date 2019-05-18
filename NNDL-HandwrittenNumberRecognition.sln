@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NNDL-HandwrittenNumberRecognition", "NNDL-HandwrittenNumberRecognition\NNDL-HandwrittenNumberRecognition.csproj", "{6372F8F9-5AD2-46A2-944C-42523E97D1F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NNDL-HandwrittenNumberRecognition", "NNDL-HandwrittenNumberRecognition\NNDL-HandwrittenNumberRecognition.csproj", "{6372F8F9-5AD2-46A2-944C-42523E97D1F4}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonApplication", "PythonApplication\PythonApplication.pyproj", "{458EB54B-DAE4-411B-9FC7-7E2C18A4E9AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{6372F8F9-5AD2-46A2-944C-42523E97D1F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6372F8F9-5AD2-46A2-944C-42523E97D1F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6372F8F9-5AD2-46A2-944C-42523E97D1F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{458EB54B-DAE4-411B-9FC7-7E2C18A4E9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{458EB54B-DAE4-411B-9FC7-7E2C18A4E9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
