@@ -25,7 +25,19 @@ namespace NNDL_HandwrittenNumberRecognition
             {
                 Exit();
             }
-            _ = new Network(new[] { 2, 3, 1 });
+            Console.WriteLine("创建神经网络...");
+            var network = new Network(new[] { 784, 15, 10 });
+
+            _ = ReadValueFromIDX(TrainLabelsPath).ToArray();
+            Console.WriteLine("读取训练数据...");
+            // 读取图像
+            foreach (var train in ReadMatrixFromIDX(TrainImagesPath).Zip(ReadValueFromIDX(TrainLabelsPath)))
+            {
+                /* train.First : 训练图像，[28, 28] 二维数组;
+                 * train.Second : 训练标签，byte;
+                 */
+            }
+
             Exit();
         }
 
@@ -62,11 +74,29 @@ namespace NNDL_HandwrittenNumberRecognition
         /// 读取IDX文件
         /// </summary>
         /// <param name="path"></param>
-        /// <returns></returns>
-        static IEnumerable<string> ReadIDX(string path)
+        /// <returns>Array 是 [28,28] 的二维数组</returns>
+        static IEnumerable<Array> ReadMatrixFromIDX(string path)
         {
             IdxReader idxReader = new IdxReader(path);
-            yield break;
+            Array image;
+            while ((image = idxReader.ReadMatrix()) != null)
+            {
+                yield return image;
+            }
+        }
+
+        /// <summary>
+        /// 读取IDX文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        static IEnumerable<byte> ReadValueFromIDX(string path)
+        {
+            IdxReader idxReader = new IdxReader(path);
+            while (idxReader.TryReadValue<byte>(out byte value))
+            {
+                yield return value;
+            }
         }
     }
 }
