@@ -8,5 +8,5 @@ class Network(object):
         self.weights = [np.random.randn(y, x)
             for x, y in zip(sizes[:-1], sizes[1:])]
 
-network = Network([2,3,1])
+network = Network([784,15,10])
 print('success');
