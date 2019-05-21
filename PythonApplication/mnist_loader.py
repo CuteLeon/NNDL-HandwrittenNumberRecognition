@@ -46,6 +46,7 @@ def load_data():
     f = gzip.open('mnist.pkl.gz', 'rb')
     training_data, validation_data, test_data = pickle.load(f, encoding="latin1")
     f.close()
+    # 以 (图像数据, 对应数字) 元组形式返回训练数据、验证数据、测试数据
     return (training_data, validation_data, test_data)
 
 def load_data_wrapper():
@@ -73,7 +74,10 @@ def load_data_wrapper():
     turn out to be the most convenient for use in our neural network
     code."""
     tr_d, va_d, te_d = load_data()
+    # 将训练数据的图像由 [1,784] 转置为 [784,1]，
+    # 同 C# Linq 扩展 IEnumerable<>().Yield()，验证数据和测试数据下同
     training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
+    # 将训练数据的答案由 值 转换为 以0填充、下标对应位置为1 的 [10] 数组，验证数据和测试数据下同
     training_results = [vectorized_result(y) for y in tr_d[1]]
     training_data = zip(training_inputs, training_results)
     validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]

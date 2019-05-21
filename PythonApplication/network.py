@@ -42,7 +42,9 @@ class Network(object):
         ever used in computing the outputs from later layers."""
         self.num_layers = len(sizes)
         self.sizes = sizes
+        # 初始化隐藏层和输出层神经元的偏置，二维数组 [层][神经元]
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        # 初始化隐藏层给输入层的权重和输出层给隐藏层的权重，三维数组 [层][后一层神经元][前一层神经元]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
@@ -75,11 +77,15 @@ class Network(object):
             test_data = list(test_data)
             n_test = len(test_data)
 
+        # 遍历训练周期 纪元
         for j in range(epochs):
+            # 打乱训练数据顺序
             random.shuffle(training_data)
+            # 以 mini_batch_size 为步长，将一维训练数据分拆为二维
             mini_batches = [
                 training_data[k:k + mini_batch_size]
                 for k in range(0, n, mini_batch_size)]
+            # 遍历小批量数据使用 反向传播 更新网络神经元的偏置和权重
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
@@ -97,9 +103,13 @@ class Network(object):
         gradient descent using backpropagation to a single mini batch.
         The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
         is the learning rate."""
+        # 使用神经网络的偏置和权重数据的维度初始化空的偏置和权重向量微分算子
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
+
+        # 遍历小批量训练数据
         for x, y in mini_batch:
+            # 使用反向传播计算偏置和权重的梯度
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
