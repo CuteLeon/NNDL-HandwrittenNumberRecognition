@@ -137,6 +137,7 @@ class Network(object):
             # 使用 dot-矩阵点乘操作 计算训练数据应用神经元偏置和权重产生的值向量
             z = np.dot(w, activation) + b
             zs.append(z)
+            # 使用 sigmoid 计算神经元的输出，并记录为激活数据
             activation = sigmoid(z)
             activations.append(activation)
         # backward pass
