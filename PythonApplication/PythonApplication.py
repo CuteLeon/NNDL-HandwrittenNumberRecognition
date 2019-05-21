@@ -1,12 +1,9 @@
-import numpy as np
+import mnist_loader
+import network
 
-class Network(object):
-    def __init__(self, sizes):
-        self.num_layers = len(sizes)
-        self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x)
-            for x, y in zip(sizes[:-1], sizes[1:])]
+training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
+training_data = list(training_data)
 
-network = Network([784,15,10])
-print('success');
+net = network.Network([784, 30, 10])
+net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
+print("success");
