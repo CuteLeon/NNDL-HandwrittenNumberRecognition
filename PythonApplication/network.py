@@ -132,7 +132,9 @@ class Network(object):
         activation = x
         activations = [x] # 使用列表逐层储存所有的激活数据 list to store all the activations, layer by layer
         zs = [] # 使用列表逐层储存所有所有的 z 向量 list to store all the z vectors, layer by layer
+        # 遍历所有的网络层的偏置和权重
         for b, w in zip(self.biases, self.weights):
+            # 使用 dot-矩阵点乘操作 计算训练数据应用神经元偏置和权重产生的值向量
             z = np.dot(w, activation) + b
             zs.append(z)
             activation = sigmoid(z)
