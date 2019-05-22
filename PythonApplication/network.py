@@ -49,7 +49,11 @@ class Network(object):
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
     def feedforward(self, a):
-        """Return the output of the network if ``a`` is input."""
+        """
+        使用神经网络前馈输出
+
+        Return the output of the network if ``a`` is input.
+        """
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a) + b)
         return a
@@ -88,6 +92,7 @@ class Network(object):
             # 遍历小批量数据使用 反向传播 更新网络神经元的偏置和权重
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
+            # 每个训练纪元结束 使用测试数据做评估
             if test_data:
                 print("Epoch {} : {} / {}".format(j,self.evaluate(test_data),n_test))
             else:
@@ -111,8 +116,10 @@ class Network(object):
         for x, y in mini_batch:
             # 使用反向传播计算偏置和权重的梯度
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+            # 应用 偏置和权重 偏差到微信数组
             nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+        # 使用学习率按比例更新 偏置和权重 到神经网络
         self.weights = [w - (eta / len(mini_batch)) * nw
                         for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b - (eta / len(mini_batch)) * nb
@@ -121,6 +128,7 @@ class Network(object):
     def backprop(self, x, y):
         """
         返回一个元组，表示成本函数 C(x) 的梯度。
+        Python 数组 [负索引] 表示数组倒数第 n 个元素
 
         Return a tuple ``(nabla_b, nabla_w)`` representing the
         gradient for the cost function C_x.  ``nabla_b`` and
@@ -140,10 +148,11 @@ class Network(object):
             # 使用 sigmoid 计算神经元的输出，并记录为激活数据
             activation = sigmoid(z)
             activations.append(activation)
-        # backward pass
+        # 反向传播 计算神经网络的输出与答案的偏差
         delta = self.cost_derivative(activations[-1], y) * \
             sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
+        # 使用 答案偏差矩阵 和 上一层激活(输出)矩阵的转置 点乘结果 记录为 神经元权重偏差
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         # 请注意，下面循环中的变量l的用法与本书第2章中的符号稍有不同。
         # 这里，L=1表示神经元的最后一层，L=2表示神经元的最后一层，依此类推。
