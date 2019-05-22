@@ -4,6 +4,7 @@ using System.Linq;
 using NNDL_HandwrittenNumberRecognition.DataReader;
 using NNDL_HandwrittenNumberRecognition.NeuralNetwork;
 using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
+using NNDL_HandwrittenNumberRecognition.Util;
 
 namespace NNDL_HandwrittenNumberRecognition
 {
@@ -17,20 +18,20 @@ namespace NNDL_HandwrittenNumberRecognition
 
         static void Main()
         {
-            Console.WriteLine(@"神经网络和深度学习-手写数字识别：");
+            Helper.PrintLine(@"神经网络和深度学习-手写数字识别：");
 
-            Console.WriteLine("检查数据文件...");
+            Helper.PrintLine("检查数据文件...");
             if (!CheckDataFiles()) Exit();
 
-            Console.WriteLine("创建神经网络...");
+            Helper.PrintLine("创建神经网络...");
             var network = new Network<SigmoidNeuron>(new[] { 784, 15, 10 });
 
-            Console.WriteLine("读取训练数据...");
+            Helper.PrintLine("读取训练数据...");
             IDataReader reader = new IDXReader();
             foreach (var (imageMatrixs, imageLabel) in reader.ReadMatrixs(TrainImagesPath).Zip(reader.ReadValues(TrainLabelsPath)))
             {
                 // 输出图像
-                Console.WriteLine($"数字：{imageLabel}");
+                Helper.PrintLine($"数字：{imageLabel}");
                 for (int y = 0; y < 28; y++)
                 {
                     for (int x = 0; x < 28; x++)
@@ -47,7 +48,7 @@ namespace NNDL_HandwrittenNumberRecognition
 
         static void Exit(int code = 0)
         {
-            Console.WriteLine("程序即将退出...");
+            Helper.PrintLine("程序即将退出...");
             Console.Read();
             Environment.Exit(code);
         }
@@ -69,7 +70,7 @@ namespace NNDL_HandwrittenNumberRecognition
             }
             else
             {
-                Console.WriteLine($"缺失文件：\n\t{string.Join("\n\t", filesNotExist)}");
+                Helper.PrintLine($"缺失文件：\n\t{string.Join("\n\t", filesNotExist)}");
                 return false;
             }
         }

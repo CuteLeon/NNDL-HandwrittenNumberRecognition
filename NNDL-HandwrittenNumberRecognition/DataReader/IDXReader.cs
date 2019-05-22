@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using NNDL_HandwrittenNumberRecognition.Util;
 
 namespace NNDL_HandwrittenNumberRecognition.DataReader
 {
@@ -31,7 +31,7 @@ namespace NNDL_HandwrittenNumberRecognition.DataReader
             {
                 height = (height << 8) + reader.ReadByte();
             }
-            Console.WriteLine($"IDX 文件矩阵数据尺寸：{width} x {height}");
+            Helper.PrintLine($"IDX 文件矩阵数据尺寸：{width} x {height}");
 
             var blockBuffer = new byte[width, height];
             while (stream.Position < stream.Length)

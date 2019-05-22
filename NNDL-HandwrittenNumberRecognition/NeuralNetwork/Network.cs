@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
+using NNDL_HandwrittenNumberRecognition.Util;
 using NumSharp;
 
 namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
@@ -36,20 +37,18 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
             var pyRandom = new NumPyRandom();
 
             // 为非输入层初始化偏置
-            _ = this.NeuronPool.Skip(1).Select(neurons =>
+            _ = this.NeuronPool.Skip(1).All(neurons =>
             {
+                foreach (var (neuron, bias) in neurons.Zip(pyRandom.randn(new[] { neurons.Count, 1 }).Array as double[]))
+                {
+                    neuron.Bias = bias;
+                }
 
                 return true;
             });
 
-            // 初始化神经元偏置二维数组
-            this.Biases = neureCounts
-                .Skip(1)
-                .Select(count =>
-                    pyRandom.randn(new[] { count, 1 }).Array
-                    .Cast<double>()
-                    .ToArray())
-                .ToArray();
+            Helper.PrintLine("");
+            /*
             // 初始化相邻层神经元的权重三维数组
             this.Weights = neureCounts
                 .SkipLast(1)
@@ -63,6 +62,7 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
                     .Select(values => values.ToArray())
                     .ToArray())
                 .ToArray();
+             */
         }
     }
 }
