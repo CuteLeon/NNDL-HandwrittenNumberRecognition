@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Accord.IO;
+using NNDL_HandwrittenNumberRecognition.DataReader;
 
 namespace NNDL_HandwrittenNumberRecognition
 {
@@ -14,7 +13,7 @@ namespace NNDL_HandwrittenNumberRecognition
         static readonly string T10kImagesPath = Path.Combine(DataDirectory, "t10k-images.idx3-ubyte");
         static readonly string T10kLabelsPath = Path.Combine(DataDirectory, "t10k-labels.idx1-ubyte");
 
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine(@"神经网络和深度学习-手写数字识别：
 使用三层神经网络结构，28*28=784个输入神经元，15个 隐藏层神经元、10个输出神经元。
@@ -28,14 +27,21 @@ namespace NNDL_HandwrittenNumberRecognition
             Console.WriteLine("创建神经网络...");
             var network = new Network(new[] { 784, 15, 10 });
 
-            _ = ReadValueFromIDX(TrainLabelsPath).ToArray();
             Console.WriteLine("读取训练数据...");
-            // 读取图像
-            foreach (var train in ReadMatrixFromIDX(TrainImagesPath).Zip(ReadValueFromIDX(TrainLabelsPath)))
+            IDataReader reader = new IDXReader();
+            foreach (var (imageMatrixs, imageLabel) in reader.ReadMatrixs(TrainImagesPath).Zip(reader.ReadValues(TrainLabelsPath)))
             {
-                /* train.First : 训练图像，[28, 28] 二维数组;
-                 * train.Second : 训练标签，byte;
-                 */
+                // 输出图像
+                Console.WriteLine($"数字：{imageLabel}");
+                for (int y = 0; y < 28; y++)
+                {
+                    for (int x = 0; x < 28; x++)
+                    {
+                        Console.Write(imageMatrixs[y, x] < 128 ? " " : "o");
+                    }
+                    Console.Write('\n');
+                }
+                Console.Read();
             }
 
             Exit();
@@ -67,35 +73,6 @@ namespace NNDL_HandwrittenNumberRecognition
             {
                 Console.WriteLine($"缺失文件：\n\t{string.Join("\n\t", filesNotExist)}");
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// 读取IDX文件
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>Array 是 [28,28] 的二维数组</returns>
-        static IEnumerable<Array> ReadMatrixFromIDX(string path)
-        {
-            IdxReader idxReader = new IdxReader(path);
-            Array image;
-            while ((image = idxReader.ReadMatrix()) != null)
-            {
-                yield return image;
-            }
-        }
-
-        /// <summary>
-        /// 读取IDX文件
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        static IEnumerable<byte> ReadValueFromIDX(string path)
-        {
-            IdxReader idxReader = new IdxReader(path);
-            while (idxReader.TryReadValue<byte>(out byte value))
-            {
-                yield return value;
             }
         }
     }
