@@ -1,44 +1,47 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
 using NumSharp;
 
-namespace NNDL_HandwrittenNumberRecognition
+namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
 {
     /// <summary>
     /// 神经网络
     /// </summary>
-    public class Network
+    public class Network<TNeuron>
+        where TNeuron : INeuron
     {
         /// <summary>
-        /// 神经网络层数
+        /// 神经元集合
         /// </summary>
-        public int NeureLayerCount { get; }
-
-        /// <summary>
-        /// 神经网络每层神经元个数
-        /// </summary>
-        public int[] NeureCounts { get; }
-
-        /// <summary>
-        /// 神经网络每层的每个神经元的偏置
-        /// </summary>
-        public double[][] Biases { get; }
-
-        /// <summary>
-        /// 神经网络每层的每个神经元对前一层所有神经元的权重
-        /// </summary>
-        public double[][][] Weights { get; }
+        List<List<TNeuron>> NeuronPool = null;
 
         /// <summary>
         /// 初始化神经网络
         /// </summary>
         /// <param name="neureCounts">神经网络每层神经元个数的集合</param>
-        public Network(int[] neureCounts)
+        public Network(IEnumerable<int> neureCounts)
         {
-            this.NeureLayerCount = neureCounts.Length;
-            this.NeureCounts = neureCounts;
+            // 初始化神经网络神经元集合
+            this.NeuronPool = new List<List<TNeuron>>(
+                neureCounts.Select(
+                    count =>
+                    Enumerable.Range(0, count).
+                    Select(index => Activator.CreateInstance<TNeuron>())
+                    .ToList())
+                );
 
             // 高斯(正态)分布 随机数发生器
             var pyRandom = new NumPyRandom();
+
+            // 为非输入层初始化偏置
+            _ = this.NeuronPool.Skip(1).Select(neurons =>
+            {
+
+                return true;
+            });
+
             // 初始化神经元偏置二维数组
             this.Biases = neureCounts
                 .Skip(1)

@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using NNDL_HandwrittenNumberRecognition.DataReader;
+using NNDL_HandwrittenNumberRecognition.NeuralNetwork;
+using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
 
 namespace NNDL_HandwrittenNumberRecognition
 {
@@ -15,17 +17,13 @@ namespace NNDL_HandwrittenNumberRecognition
 
         static void Main()
         {
-            Console.WriteLine(@"神经网络和深度学习-手写数字识别：
-使用三层神经网络结构，28*28=784个输入神经元，15个 隐藏层神经元、10个输出神经元。
-输入为：0~1的实数代表每个像素的灰度值，0.0=白色，1.0=黑色。");
+            Console.WriteLine(@"神经网络和深度学习-手写数字识别：");
 
             Console.WriteLine("检查数据文件...");
-            if (!CheckDataFiles())
-            {
-                Exit();
-            }
+            if (!CheckDataFiles()) Exit();
+
             Console.WriteLine("创建神经网络...");
-            var network = new Network(new[] { 784, 15, 10 });
+            var network = new Network<SigmoidNeuron>(new[] { 784, 15, 10 });
 
             Console.WriteLine("读取训练数据...");
             IDataReader reader = new IDXReader();
