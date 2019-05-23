@@ -102,7 +102,20 @@ namespace NNDL.NeuralNetwork
             {
                 // 使用反向传播计算神经网络权重和偏置的偏差量
                 var (deltaNablaBiases, deltaNablaWeight) = this.BackPropogation(Image, Label);
+
+                /* TODO
+                nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+                nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+                 */
             }
+
+            /* TODO
+            # 使用学习率按比例更新 偏置和权重 到神经网络
+            self.weights = [w - (eta / len(mini_batch)) * nw
+                for w, nw in zip(self.weights, nabla_w)]
+            self.biases = [b - (eta / len(mini_batch)) * nb
+                for b, nb in zip(self.biases, nabla_b)]
+             */
         }
 
         /// <summary>
@@ -164,7 +177,7 @@ namespace NNDL.NeuralNetwork
                 weightedInput = weightedInputs[^index];
                 output = this.Sigmoid(weightedInput);
             }
-            /*
+            /* TODO: 
             for l in range(2, self.num_layers):
                 z = zs[-l]
                 sp = sigmoid_prime(z)
