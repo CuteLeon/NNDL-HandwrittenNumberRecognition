@@ -21,12 +21,12 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
         /// <summary>
         /// 初始化神经网络
         /// </summary>
-        /// <param name="neureCounts">神经网络每层神经元个数的集合</param>
-        public Network(IEnumerable<int> neureCounts)
+        /// <param name="neuronCounts">神经网络每层神经元个数的集合</param>
+        public Network(IEnumerable<int> neuronCounts)
         {
             // 初始化神经网络神经元集合
             this.NeuronPool = new List<List<TNeuron>>(
-                neureCounts.Select(
+                neuronCounts.Select(
                     count =>
                     Enumerable.Range(0, count).
                     Select(index => Activator.CreateInstance<TNeuron>())
@@ -42,6 +42,17 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
                 foreach (var (neuron, bias) in neurons.Zip(pyRandom.randn(new[] { neurons.Count, 1 }).Array as double[]))
                 {
                     neuron.Bias = bias;
+                }
+
+                return true;
+            });
+
+            _ = this.NeuronPool.SkipLast(1).Zip(this.NeuronPool.Skip(1)).All(neurons =>
+            {
+                var weights = pyRandom.randn(new int[] { neurons.Second.Count, neurons.First.Count });
+                for (int index = 0; index < neurons.Second.Count; index++)
+                {
+                    neurons.Second[index].Weight = weights[index].Array as double[];
                 }
 
                 return true;
