@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
-using NNDL_HandwrittenNumberRecognition.Util;
 using NumSharp;
 
 namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
@@ -16,7 +15,7 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
         /// <summary>
         /// 神经元集合
         /// </summary>
-        List<List<TNeuron>> NeuronPool = null;
+        readonly List<List<TNeuron>> NeuronPool = null;
 
         /// <summary>
         /// 初始化神经网络
@@ -57,23 +56,6 @@ namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork
 
                 return true;
             });
-
-            Helper.PrintLine("");
-            /*
-            // 初始化相邻层神经元的权重三维数组
-            this.Weights = neureCounts
-                .SkipLast(1)
-                .Zip(
-                    neureCounts
-                    .Skip(1))
-                .Select(count =>
-                    pyRandom.randn(new int[] { count.Second, count.First }).Array
-                    .Cast<double>()
-                    .Splite(count.First)
-                    .Select(values => values.ToArray())
-                    .ToArray())
-                .ToArray();
-             */
         }
     }
 }
