@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons
+namespace NNDL.NeuralNetwork.Neurons
 {
     /// <summary>
     /// S-型神经元

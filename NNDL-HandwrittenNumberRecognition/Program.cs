@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using NNDL_HandwrittenNumberRecognition.DataReader;
-using NNDL_HandwrittenNumberRecognition.NeuralNetwork;
-using NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons;
-using NNDL_HandwrittenNumberRecognition.Util;
+using NNDL.DataReader;
+using NNDL.NeuralNetwork;
+using NNDL.NeuralNetwork.Neurons;
+using NNDL.Util;
+using NumSharp;
 
-namespace NNDL_HandwrittenNumberRecognition
+namespace NNDL
 {
     class Program
     {
@@ -28,20 +30,23 @@ namespace NNDL_HandwrittenNumberRecognition
 
             Helper.PrintLine("读取训练数据...");
             IDataReader reader = new IDXReader();
-            foreach (var (imageMatrixs, imageLabel) in reader.ReadMatrixs(TrainImagesPath).Zip(reader.ReadValues(TrainLabelsPath)))
-            {
-                // 输出图像
-                Helper.PrintLine($"数字：{imageLabel}");
-                for (int y = 0; y < 28; y++)
-                {
-                    for (int x = 0; x < 28; x++)
-                    {
-                        Console.Write(imageMatrixs[y, x] < 128 ? " " : "o");
-                    }
-                    Console.Write('\n');
-                }
-                Console.Read();
-            }
+            var trainImages = reader.ReadMatrixsFlattened(TrainImagesPath).ToArray();
+            var trainLabels = reader.ReadValues(TrainLabelsPath).Select(value => { var values = Enumerable.Repeat<double>(0.0, 10).Cast<double>().ToArray(); values[value] = 1; return values; }).ToArray();
+
+            Stopwatch stopwatch = new Stopwatch();
+            Helper.PrintLine("随机梯度下降算法训练神经网络...");
+            Helper.PrintSplit();
+            stopwatch.Start();
+
+            network.StochasticGradientDescent(
+                trainImages.Zip(trainLabels),
+                3, // 30
+                10,
+                3.0);
+
+            stopwatch.Stop();
+            Helper.PrintSplit();
+            Helper.PrintLine($"神经网络训练结束，耗时：{stopwatch.Elapsed.ToString()}");
 
             Exit();
         }

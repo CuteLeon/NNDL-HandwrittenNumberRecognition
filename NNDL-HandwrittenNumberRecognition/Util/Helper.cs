@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace NNDL_HandwrittenNumberRecognition.Util
+namespace NNDL.Util
 {
     /// <summary>
     /// 通用助手

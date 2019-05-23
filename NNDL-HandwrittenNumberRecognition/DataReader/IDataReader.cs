@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NNDL_HandwrittenNumberRecognition.DataReader
+namespace NNDL.DataReader
 {
     /// <summary>
     /// 数据读取接口
@@ -12,7 +12,14 @@ namespace NNDL_HandwrittenNumberRecognition.DataReader
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public IEnumerable<byte[,]> ReadMatrixs(string filePath);
+        public IEnumerable<double[,]> ReadMatrixs(string filePath);
+
+        /// <summary>
+        /// 扁平读取矩阵
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public IEnumerable<double[]> ReadMatrixsFlattened(string filePath);
 
         /// <summary>
         /// 读取值

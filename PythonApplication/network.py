@@ -150,7 +150,7 @@ class Network(object):
             activations.append(activation)
         # 反向传播 计算神经网络的输出与答案的偏差
         delta = self.cost_derivative(activations[-1], y) * \
-            sigmoid_prime(zs[-1])
+             sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         # 使用 答案偏差矩阵 和 上一层激活(输出)矩阵的转置 点乘结果 记录为 神经元权重偏差
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())

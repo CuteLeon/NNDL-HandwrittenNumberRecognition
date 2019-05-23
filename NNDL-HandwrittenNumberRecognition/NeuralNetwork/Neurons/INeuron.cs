@@ -1,4 +1,4 @@
-﻿namespace NNDL_HandwrittenNumberRecognition.NeuralNetwork.Neurons
+﻿namespace NNDL.NeuralNetwork.Neurons
 {
     /// <summary>
     /// 神经元接口
