@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>NNDL_ML.NET</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NNDL\DataReader\IDataReader.cs" Link="DataReader\IDataReader.cs" />
+    <Compile Include="..\NNDL\DataReader\IDXReader.cs" Link="DataReader\IDXReader.cs" />
+    <Compile Include="..\NNDL\Util\Helper.cs" Link="Util\Helper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML" Version="1.0.0" />
+    <PackageReference Include="Microsoft.ML.TensorFlow" Version="0.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Util\" />
+    <Folder Include="DataReader\" />
+  </ItemGroup>
+
+</Project>
