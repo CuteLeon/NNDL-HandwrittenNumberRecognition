@@ -102,20 +102,37 @@ namespace NNDL.NeuralNetwork
             {
                 // 使用反向传播计算神经网络权重和偏置的偏差量
                 var (deltaNablaBiases, deltaNablaWeight) = this.BackPropogation(Image, Label);
-
-                /* TODO
-                nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-                nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
-                 */
+                for (int index = 0; index < nablaBiases.Length; index++)
+                {
+                    nablaBiases[index] = nablaBiases[index].Zip(deltaNablaBiases[index]).Select(bias => bias.First + bias.Second).ToArray();
+                }
+                for (int index1 = 0; index1 < nablaWeight.Length; index1++)
+                {
+                    for (int index2 = 0; index2 < nablaWeight[index1].Length; index2++)
+                    {
+                        nablaWeight[index1][index2] = nablaWeight[index1][index2].Zip(deltaNablaWeight[index1][index2]).Select(weight => weight.First + weight.Second).ToArray();
+                    }
+                }
             }
 
-            /* TODO
-            # 使用学习率按比例更新 偏置和权重 到神经网络
-            self.weights = [w - (eta / len(mini_batch)) * nw
-                for w, nw in zip(self.weights, nabla_w)]
-            self.biases = [b - (eta / len(mini_batch)) * nb
-                for b, nb in zip(self.biases, nabla_b)]
-             */
+            for (int index1 = 0; index1 < nablaBiases.Length; index1++)
+            {
+                for (int index2 = 0; index2 < nablaBiases[index1].Length; index2++)
+                {
+                    this.NeuronPool[index1 + 1][index2].Bias = this.NeuronPool[index1 + 1][index2].Bias - (eta / trainDatas.Count()) * nablaBiases[index1][index2];
+                }
+            }
+
+            for (int index1 = 0; index1 < nablaWeight.Length; index1++)
+            {
+                for (int index2 = 0; index2 < nablaWeight[index1].Length; index2++)
+                {
+                    for (int index3 = 0; index3 < nablaWeight[index1][index2].Length; index3++)
+                    {
+                        this.NeuronPool[index1 + 1][index2].Weight[index3] = this.NeuronPool[index1 + 1][index2].Weight[index3] - (eta / trainDatas.Count()) * nablaWeight[index1][index2][index3];
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -130,33 +147,30 @@ namespace NNDL.NeuralNetwork
             double[][] deltaNablaBiases = this.NeuronPool.Skip(1).Select(neurons => new double[neurons.Count]).ToArray();
             double[][][] deltaNablaWeight = this.NeuronPool.Skip(1).Select(neurons => neurons.Select(neuron => new double[neuron.Weight.Length]).ToArray()).ToArray();
 
-            double[] input = image;
-            double[] output = null;
-            double[] weightedInput = null;
-            List<double[]> inputs = new List<double[]>() { image };
-            List<double[]> weightedInputs = new List<double[]>();
+            double[] z = null;
+            double[] activation = image;
+            List<double[]> activations = new List<double[]>() { image };
+            List<double[]> zs = new List<double[]>();
 
             // 遍历网络非输入层
             foreach (var neurons in this.NeuronPool.Skip(1))
             {
                 // 计算带权和偏置的输入
-                weightedInput = (np.dot(
+                z = (np.dot(
                     new NDArray(neurons.Select(n => n.Weight).Join().ToArray(), new Shape(new int[] { neurons.Count, neurons.First().Weight.Length })),
-                    new NDArray(input, new Shape(new int[] { input.Length, 1 })))
+                    new NDArray(activation, new Shape(new int[] { activation.Length, 1 })))
                     + new NDArray(neurons.Select(n => n.Bias).ToArray(), new Shape(new int[] { neurons.Count, 1 }))).Array as double[];
                 // 保存带权输入
-                weightedInputs.Add(weightedInput);
+                zs.Add(z);
                 // 计算当前层神经元输出
-                output = this.Sigmoid(weightedInput);
-                // 当前层的输出作为下一层的输入
-                input = output;
+                activation = this.Sigmoid(z);
                 // 记录下一层的输入
-                inputs.Add(input);
+                activations.Add(activation);
             }
 
             // 使用代价函数和Sigmoid导数函数计算输出偏差
-            double[] deltaOutput = this.CostDerivative(output, label)
-                .Zip(this.SigmoidPrime(weightedInput))
+            double[] deltaOutput = this.CostDerivative(activations[^1], label)
+                .Zip(this.SigmoidPrime(zs[^1]))
                 .Select(value => value.First * value.Second)
                 .ToArray();
 
@@ -166,26 +180,35 @@ namespace NNDL.NeuralNetwork
             var deltaWeight = np.dot(
                 new NDArray(deltaOutput, new Shape(new int[] { deltaOutput.Length, 1 })),
                 // 整理矩阵需要 [转置]
-                new NDArray(inputs[^2], new Shape(new int[] { 1, inputs[^2].Length })));
+                new NDArray(activations[^2], new Shape(new int[] { 1, activations[^2].Length })));
             for (int index = 0; index < deltaWeight.shape[0]; index++)
             {
                 deltaNablaWeight[^1][index] = deltaWeight[index].Array as double[];
             }
 
-            foreach (int index in Enumerable.Range(2, this.NeuronPool.Count))
+            foreach (int index in Enumerable.Range(2, this.NeuronPool.Count - 2))
             {
-                weightedInput = weightedInputs[^index];
-                output = this.Sigmoid(weightedInput);
+                z = zs[^index];
+                var sp = this.SigmoidPrime(z);
+
+                deltaOutput = (np.dot(
+                    // 这里需要转置
+                    new NDArray(this.NeuronPool[^(index - 1)].Select(n => n.Weight).Join().ToArray(), new Shape(new int[] { this.NeuronPool[^(index - 1)].First().Weight.Length, this.NeuronPool[^(index - 1)].Count })),
+                    new NDArray(deltaOutput, new Shape(new int[] { deltaOutput.Length, 1 })))
+                    * new NDArray(sp, new Shape(sp.Length, 1)))
+                    .Array as double[];
+
+                deltaNablaBiases[^index] = deltaOutput;
+                deltaWeight = np.dot(
+                   new NDArray(deltaOutput, new Shape(new int[] { deltaOutput.Length, 1 })),
+                   // 整理矩阵需要 [转置]
+                   new NDArray(activations[^(index + 1)], new Shape(new int[] { 1, activations[^(index + 1)].Length })));
+                for (int i = 0; i < deltaWeight.shape[0]; i++)
+                {
+                    deltaNablaWeight[^index][i] = deltaWeight[i].Array as double[];
+                }
             }
-            /* TODO: 
-            for l in range(2, self.num_layers):
-                z = zs[-l]
-                sp = sigmoid_prime(z)
-                delta = np.dot(self.weights[-l + 1].transpose(), delta) * sp
-                nabla_b[-l] = delta
-                nabla_w[-l] = np.dot(delta, activations[-l - 1].transpose())
-            return (nabla_b, nabla_w)
-             */
+
             return (deltaNablaBiases, deltaNablaWeight);
         }
 
