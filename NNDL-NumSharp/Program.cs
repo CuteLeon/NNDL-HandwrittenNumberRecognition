@@ -1,4 +1,5 @@
 ﻿using System;
+using NNDL.DataReader;
 using NNDL.Util;
 
 namespace NNDL_NumSharp
@@ -8,6 +9,9 @@ namespace NNDL_NumSharp
         static void Main(string[] args)
         {
             Helper.PrintLine("NNDL-NumSharp");
+
+            MNISTReader reader = new MNISTReader();
+
         }
     }
 }
