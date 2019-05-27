@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using NNDL.DataReader;
 using NNDL.Util;
+using NumSharp;
 
 namespace NNDL_NumSharp
 {
@@ -23,8 +24,8 @@ namespace NNDL_NumSharp
 
             Helper.PrintLine("读取训练数据...");
             MNISTReader reader = new MNISTReader();
-            var trainImages = reader.ReadMatrixsFlattened(TrainImagesPath).ToArray();
-            var trainLabels = reader.ReadValues(TrainLabelsPath).Select(value => { var values = Enumerable.Repeat<double>(0.0, 10).Cast<double>().ToArray(); values[value] = 1; return values; }).ToArray();
+            var trainImages = reader.ReadMatrixsFlattened(TrainImagesPath).Take(1000).Select(array => new NDArray(array, new[] { array.Length, 1 })).ToArray();
+            var trainLabels = reader.ReadValues(TrainLabelsPath).Take(1000).ToArray();
 
             Helper.PrintLine("创建神经网络...");
             var network = new Network(new[] { 784, 30, 10 });
@@ -34,17 +35,21 @@ namespace NNDL_NumSharp
             Helper.PrintSplit();
             stopwatch.Start();
 
-            /*
             network.StochasticGradientDescent(
-                trainImages.Zip(trainLabels),
-                3,
+                trainImages.Zip(trainLabels.Select(value => { var values = Enumerable.Repeat(0.0, 10).Cast<double>().ToArray(); values[value] = 1; return new NDArray(values, new[] { values.Length, 1 }); })),
                 10,
+                20,
                 3.0);
-             */
 
             stopwatch.Stop();
             Helper.PrintSplit();
             Helper.PrintLine($"神经网络训练结束，耗时：{stopwatch.Elapsed.ToString()}");
+
+            Helper.PrintSplit();
+            Helper.PrintLine("预测：");
+            var output = network.FeedForward(trainImages[0]).Array as double[];
+            Helper.PrintLine($"答案：{trainLabels[0]}");
+            Helper.PrintLine($"预测结果：\n\t{string.Join("\n\t", Enumerable.Range(0, output.Length).Select(index => $"{index} => {output[index]:P2}"))}");
 
             Exit();
         }

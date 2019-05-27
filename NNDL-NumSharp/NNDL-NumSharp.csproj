@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\NNDL\LinqExtension.cs" Link="LinqExtension.cs" />
     <Compile Include="..\NNDL\Util\Helper.cs" Link="Helper.cs" />
+    <Compile Include="..\NNDL\Util\RandomComparer.cs" Link="RandomComparer.cs" />
   </ItemGroup>
 
   <ItemGroup>
